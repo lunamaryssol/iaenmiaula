@@ -27,6 +27,27 @@
   a{color:var(--petroleo)}
   .wrap{max-width:1040px;margin:0 auto;padding:0 22px}
 
+  /* Acceso a la biblioteca */
+  [hidden]{display:none!important}
+  .access-gate{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;overflow-y:auto;padding:24px;background:var(--crema)}
+  .access-card{width:min(100%,520px);padding:30px;background:#fff;border:2px solid var(--linea);border-radius:28px;box-shadow:0 14px 40px rgba(27,43,52,.12)}
+  .access-card h1{margin:22px 0 10px;font-size:clamp(28px,6vw,38px)}
+  .access-card>p{margin:0 0 22px;color:var(--tinta-suave)}
+  .access-form{display:grid;gap:14px}
+  .access-label{display:grid;gap:6px;font-weight:700}
+  .access-input{width:100%;padding:13px 15px;border:2px solid var(--linea);border-radius:14px;background:#fff;color:var(--tinta);font:600 17px var(--texto)}
+  .access-input:focus{outline:3px solid rgba(31,111,139,.2);border-color:var(--petroleo)}
+  .access-consent{display:flex;align-items:flex-start;gap:10px;color:var(--tinta-suave);font-size:14px;line-height:1.45}
+  .access-consent input{flex:0 0 auto;width:20px;height:20px;margin:2px 0 0;accent-color:var(--petroleo)}
+  .access-submit{width:100%;border:0;border-radius:999px;padding:14px 20px;background:var(--coral);color:#fff;font:800 17px var(--titulos);cursor:pointer;box-shadow:0 4px 0 var(--coral-sombra)}
+  .access-submit:hover{background:#F57A6B}
+  .access-submit:disabled{opacity:.65;cursor:wait}
+  .access-status{min-height:24px;margin:0;color:var(--tinta-suave);font-size:14px}
+  .access-foot{margin:18px 0 0!important;font-size:14px}
+  .access-trap{position:absolute!important;left:-10000px!important;width:1px!important;height:1px!important;overflow:hidden!important}
+  @media(max-width:560px){.access-card{padding:24px 20px}}
+
+
   /* Cabecera */
   header{padding:44px 0 8px}
   .top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
@@ -101,6 +122,33 @@
 </style>
 </head>
 <body>
+<div id="accessGate" class="access-gate" role="dialog" aria-modal="true" aria-labelledby="accessTitle">
+  <section class="access-card">
+    <span class="pill">Biblioteca de Recursos IA para profes</span>
+    <h1 id="accessTitle">Deja tus datos para entrar</h1>
+    <p>Escribe tu nombre y correo para registrar tu acceso a la biblioteca.</p>
+    <form id="accessForm" class="access-form" action="https://script.google.com/macros/s/AKfycbwG14bnZrNBKEKQmKyD9rfXTcR16jgW8bVlv5ruv1fV9HpSeElGNkBT8wyL9Pj44H7N/exec" method="post" target="registrationFrame">
+      <label class="access-label" for="accessName">Nombre
+        <input class="access-input" id="accessName" name="nombre" type="text" maxlength="120" autocomplete="name" required>
+      </label>
+      <label class="access-label" for="accessEmail">Correo electrónico
+        <input class="access-input" id="accessEmail" name="correo" type="email" maxlength="254" autocomplete="email" required>
+      </label>
+      <label class="access-consent">
+        <input name="consentimiento" type="checkbox" value="si" required>
+        <span>Autorizo el uso de mi nombre y correo para registrar mi acceso a esta biblioteca.</span>
+      </label>
+      <label class="access-trap" aria-hidden="true">Sitio web
+        <input name="website" type="text" tabindex="-1" autocomplete="off">
+      </label>
+      <button class="access-submit" id="accessSubmit" type="submit">Entrar a la biblioteca</button>
+      <p class="access-status" id="accessStatus" role="status" aria-live="polite"></p>
+    </form>
+    <p class="access-foot">IA en mi aula · La IA ayuda, el profe decide.</p>
+  </section>
+</div>
+<iframe name="registrationFrame" id="registrationFrame" title="Respuesta del registro" hidden></iframe>
+<div id="appContent" hidden>
 <header>
   <div class="wrap">
     <div class="top">
@@ -163,6 +211,7 @@
 <footer>
   <div class="wrap">IA en mi aula · La IA ayuda, el profe decide.</div>
 </footer>
+</div>
 
 <script src="prompts.js"></script>
 <script>
@@ -286,6 +335,65 @@
   $limpiar.addEventListener('click', function(){ $q.value=''; render(); $q.focus(); });
   var inicial = new URLSearchParams(location.search).get('q'); if(inicial) $q.value = inicial;
   pintarChips(); render();
+})();
+</script>
+<script>
+(function(){
+  var gate=document.getElementById('accessGate');
+  var app=document.getElementById('appContent');
+  var form=document.getElementById('accessForm');
+  var submit=document.getElementById('accessSubmit');
+  var status=document.getElementById('accessStatus');
+  var timer=null;
+  var storageKey='iaenmiaula_access_v1';
+
+  function showLibrary(){
+    gate.hidden=true;
+    app.hidden=false;
+    document.body.style.overflow='';
+    try{localStorage.setItem(storageKey,'1');}catch(e){}
+    var search=document.getElementById('q');
+    if(search) search.focus({preventScroll:true});
+  }
+  function hasAccess(){
+    try{return localStorage.getItem(storageKey)==='1';}catch(e){return false;}
+  }
+  if(hasAccess()) showLibrary();
+  else{
+    gate.hidden=false;
+    app.hidden=true;
+    document.body.style.overflow='hidden';
+    document.getElementById('accessName').focus({preventScroll:true});
+  }
+
+  form.addEventListener('submit',function(){
+    status.textContent='Registrando tu acceso…';
+    submit.disabled=true;
+    if(timer) clearTimeout(timer);
+    timer=setTimeout(function(){
+      if(submit.disabled){
+        submit.disabled=false;
+        status.textContent='No recibimos respuesta. Comprueba tu conexión e inténtalo de nuevo.';
+      }
+    },20000);
+  });
+
+  window.addEventListener('message',function(event){
+    var host='';
+    try{host=new URL(event.origin).hostname;}catch(e){return;}
+    if(event.origin!=='https://script.google.com' && host!=='script.googleusercontent.com' && !host.endsWith('.script.googleusercontent.com')) return;
+    var data=event.data;
+    if(typeof data==='string'){try{data=JSON.parse(data);}catch(e){return;}}
+    if(!data || data.type!=='iaenmiaula-registration') return;
+    if(timer) clearTimeout(timer);
+    submit.disabled=false;
+    if(data.ok){
+      status.textContent='Acceso registrado.';
+      showLibrary();
+    }else{
+      status.textContent=data.message || 'No se pudo registrar. Revisa los datos e inténtalo de nuevo.';
+    }
+  });
 })();
 </script>
 </body>
