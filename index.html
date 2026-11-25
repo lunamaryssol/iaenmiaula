@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Biblioteca de prompts para profes · IA en mi aula</title>
+<meta name="description" content="Prompts listos para copiar y pegar para preparar mejores clases y en menos tiempo con inteligencia artificial. Por IA en mi aula.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Poppins:wght@600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --petroleo:#1F6F8B;
+    --mostaza:#F2B544;
+    --crema:#FFF8EC;
+    --coral:#F26B5B;
+    --coral-sombra:#CF4F40;
+    --tinta:#1B2B34;
+    --tinta-suave:#4A5A63;
+    --linea:#EFE3CC;
+    --titulos:'Poppins',system-ui,sans-serif;
+    --texto:'Nunito',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--crema);color:var(--tinta);font-family:var(--texto);font-size:17px;line-height:1.6}
+  a{color:var(--petroleo)}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 22px}
+
+  /* Cabecera */
+  header{padding:44px 0 8px}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+  .pill{display:inline-block;background:var(--mostaza);color:var(--tinta);font-family:var(--titulos);font-weight:600;font-size:14px;padding:7px 16px;border-radius:999px}
+  .marca{font-family:var(--titulos);font-weight:600;font-size:15px;text-align:right;line-height:1.35}
+  .marca small{display:block;font-family:var(--texto);font-weight:400;color:var(--tinta-suave);font-size:14px}
+  .hero{display:grid;grid-template-columns:1.5fr 1fr;gap:20px;align-items:center;margin-top:22px}
+  h1{font-family:var(--titulos);font-weight:800;color:var(--petroleo);font-size:clamp(32px,5.4vw,52px);line-height:1.1;margin:0 0 14px;letter-spacing:-.5px}
+  h1 .subr{position:relative;white-space:nowrap}
+  h1 .subr svg{position:absolute;left:0;bottom:-10px;width:100%;height:14px}
+  .lead{color:var(--tinta-suave);font-size:19px;margin:22px 0 0;max-width:520px}
+  .robi{justify-self:center;width:min(300px,70%)}
+  .robi svg{width:100%;height:auto;display:block}
+
+  /* Buscador */
+  .buscar{margin:34px 0 14px;position:relative}
+  .buscar label{position:absolute;left:-9999px}
+  .buscar svg{position:absolute;left:22px;top:50%;transform:translateY(-50%);width:24px;height:24px;pointer-events:none}
+  .buscar input{width:100%;font:600 18px var(--texto);color:var(--tinta);background:#fff;border:2.5px solid var(--linea);border-radius:999px;padding:18px 56px 18px 58px;box-shadow:0 8px 24px rgba(31,111,139,.08);outline:none;transition:border-color .15s,box-shadow .15s}
+  .buscar input::placeholder{color:#8B979D;font-weight:400}
+  .buscar input:focus{border-color:var(--petroleo);box-shadow:0 8px 24px rgba(31,111,139,.18)}
+  .limpiar{position:absolute;right:14px;top:50%;transform:translateY(-50%);border:0;background:var(--crema);color:var(--petroleo);width:34px;height:34px;border-radius:50%;font-size:20px;line-height:1;cursor:pointer;display:none}
+  .limpiar.on{display:block}
+  .limpiar:focus-visible,.chip:focus-visible,.btn:focus-visible,.cta:focus-visible,summary:focus-visible{outline:3px solid var(--mostaza);outline-offset:2px}
+
+  .chips{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 6px}
+  .chip{font:700 15px var(--texto);border:2px solid var(--petroleo);background:transparent;color:var(--petroleo);padding:7px 16px;border-radius:999px;cursor:pointer;transition:background .15s,color .15s}
+  .chip:hover{background:#fff}
+  .chip[aria-pressed="true"]{background:var(--petroleo);color:#fff}
+  .conteo{color:var(--tinta-suave);font-size:15px;margin:14px 0 18px;min-height:24px}
+
+  /* Tarjetas */
+  .grid{display:grid;gap:20px;padding-bottom:28px}
+  .card{background:#fff;border-radius:28px;padding:26px 28px 24px;box-shadow:0 10px 30px rgba(27,43,52,.07);border:2px solid transparent}
+  .card h2{font-family:var(--titulos);font-weight:600;color:var(--petroleo);font-size:23px;line-height:1.25;margin:0 0 6px}
+  .card .desc{margin:0 0 14px;color:var(--tinta-suave)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+  .tag{background:var(--crema);color:var(--petroleo);font-weight:700;font-size:13.5px;padding:3px 12px;border-radius:999px}
+  .tag.cat{background:var(--petroleo);color:#fff}
+  .acciones{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .btn{font:800 16px var(--titulos);cursor:pointer;border-radius:999px;padding:11px 22px;border:2.5px solid var(--petroleo);background:transparent;color:var(--petroleo)}
+  .btn:hover{background:var(--crema)}
+  .btn.copiar{background:var(--coral);border-color:var(--coral);color:#fff;box-shadow:0 4px 0 var(--coral-sombra)}
+  .btn.copiar:hover{background:#F57A6B}
+  .btn.copiar:active{transform:translateY(3px);box-shadow:0 1px 0 var(--coral-sombra)}
+  .btn.copiar.ok{background:var(--petroleo);border-color:var(--petroleo);box-shadow:0 4px 0 #14516A}
+  .cuerpo{margin-top:18px;background:var(--crema);border-radius:20px;padding:20px 22px;white-space:pre-wrap;font-size:17px;border-left:6px solid var(--mostaza)}
+  .cuerpo[hidden]{display:none}
+  mark{background:rgba(242,181,68,.45);color:inherit;border-radius:4px;padding:0 2px}
+
+  .vacio{text-align:center;background:#fff;border-radius:28px;padding:38px 24px;box-shadow:0 10px 30px rgba(27,43,52,.07)}
+  .vacio h2{font-family:var(--titulos);color:var(--petroleo);margin:0 0 6px}
+  .vacio p{margin:0 0 16px;color:var(--tinta-suave)}
+
+  /* Cierre */
+  .cierre{background:var(--petroleo);color:#fff;border-radius:32px;padding:34px 34px;margin:10px 0 40px;display:flex;gap:24px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+  .cierre h2{font-family:var(--titulos);font-weight:800;font-size:26px;line-height:1.2;margin:0 0 6px}
+  .cierre h2 span{color:var(--mostaza)}
+  .cierre p{margin:0;max-width:520px;color:#E3F0F4}
+  .cta{display:inline-block;background:var(--coral);color:#fff;font:800 18px var(--titulos);text-decoration:none;padding:15px 30px;border-radius:999px;box-shadow:0 5px 0 var(--coral-sombra)}
+  .cta:hover{background:#F57A6B}
+  footer{padding:0 0 46px;text-align:center;color:var(--tinta-suave);font-size:15px}
+
+  @media (max-width:760px){
+    .hero{grid-template-columns:1fr}
+    .robi{order:-1;width:170px;justify-self:start}
+    .marca{text-align:left}
+    .card{padding:22px 20px}
+    .cierre{padding:28px 22px}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="top">
+      <span class="pill">Biblioteca de prompts</span>
+      <div class="marca">IA en mi aula<small>Prepara mejores clases y en menos tiempo</small></div>
+    </div>
+
+    <div class="hero">
+      <div>
+        <h1>Prompts para profes, <span class="subr">listos para pegar
+          <svg viewBox="0 0 300 14" preserveAspectRatio="none" aria-hidden="true"><path d="M3 9 C 30 2, 55 13, 85 7 S 140 3, 170 8 S 235 12, 297 5" fill="none" stroke="#F26B5B" stroke-width="4" stroke-linecap="round"/></svg>
+        </span></h1>
+        <p class="lead">Busca, copia y pégalo en tu asistente de IA favorito. Sin tecnicismos y contigo siempre al mando: la IA ayuda, el profe decide.</p>
+      </div>
+      <div class="robi" aria-hidden="true">
+        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="170" cy="150" r="125" fill="#FCE6C0"/>
+          <path d="M40 60 l8 -20 l8 20 l20 8 l-20 8 l-8 20 l-8 -20 l-20 -8z" fill="none" stroke="#1F6F8B" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+          <path d="M262 232 l6 -14 l6 14 l14 6 l-14 6 l-6 14 l-6 -14 l-14 -6z" fill="none" stroke="#F26B5B" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+          <rect x="145" y="42" width="10" height="34" rx="5" fill="#1F6F8B"/>
+          <circle cx="150" cy="38" r="15" fill="#F26B5B"/>
+          <rect x="82" y="72" width="136" height="110" rx="38" fill="#1F6F8B"/>
+          <rect x="100" y="94" width="100" height="66" rx="26" fill="#FFF8EC"/>
+          <circle cx="127" cy="123" r="9" fill="#1B2B34"/><circle cx="173" cy="123" r="9" fill="#1B2B34"/>
+          <circle cx="124" cy="120" r="3" fill="#fff"/><circle cx="170" cy="120" r="3" fill="#fff"/>
+          <circle cx="107" cy="143" r="7" fill="#F26B5B" opacity=".45"/><circle cx="193" cy="143" r="7" fill="#F26B5B" opacity=".45"/>
+          <path d="M135 142 q15 13 30 0" fill="none" stroke="#F26B5B" stroke-width="5" stroke-linecap="round"/>
+          <rect x="102" y="192" width="96" height="78" rx="30" fill="#1F6F8B"/>
+          <circle cx="150" cy="231" r="14" fill="#F2B544"/>
+          <rect x="52" y="200" width="30" height="16" rx="8" fill="#1F6F8B" transform="rotate(-30 67 208)"/>
+          <rect x="218" y="196" width="30" height="16" rx="8" fill="#1F6F8B" transform="rotate(30 233 204)"/>
+          <circle cx="262" cy="176" r="16" fill="#F2B544"/><rect x="255" y="190" width="14" height="9" rx="3" fill="#1F6F8B"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="buscar" role="search">
+      <label for="q">Buscar prompts</label>
+      <svg viewBox="0 0 24 24" fill="none" stroke="#1F6F8B" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 L21 21"/></svg>
+      <input id="q" type="search" placeholder="Busca por tema, materia o palabra clave…" autocomplete="off">
+      <button class="limpiar" id="limpiar" type="button" aria-label="Borrar búsqueda">×</button>
+    </div>
+    <div class="chips" id="chips" role="group" aria-label="Filtrar por categoría"></div>
+    <div class="conteo" id="conteo" aria-live="polite"></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="grid" id="lista"></div>
+
+  <section class="cierre" aria-label="Más prompts">
+    <div>
+      <h2>Vienen más prompts. <span>Y en enero, talleres.</span></h2>
+      <p>Sigue a IA en mi aula en Instagram y avísame qué prompt te gustaría ver aquí.</p>
+    </div>
+    <a class="cta" href="https://www.instagram.com/iaenmiaula/" target="_blank" rel="noopener">Seguir @iaenmiaula</a>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">IA en mi aula · La IA ayuda, el profe decide.</div>
+</footer>
+
+<script src="prompts.js"></script>
+<script>
+(function(){
+  var datos = (window.PROMPTS || []).slice();
+  var $q = document.getElementById('q'), $lista = document.getElementById('lista'),
+      $chips = document.getElementById('chips'), $conteo = document.getElementById('conteo'),
+      $limpiar = document.getElementById('limpiar');
+  var cat = 'Todos';
+
+  function norm(s){ return (s||'').toString().normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase(); }
+  function esc(s){ return s.replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+
+  // Resalta las palabras buscadas respetando acentos (compara sin tildes, escribe el original)
+  function resaltar(texto, palabras){
+    if(!palabras.length) return esc(texto);
+    var plano = '', mapa = [];
+    for (var i=0;i<texto.length;i++){
+      var base = texto[i].normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+      for (var j=0;j<base.length;j++){ plano += base[j]; mapa.push(i); }
+    }
+    var marcas = new Array(texto.length+1).fill(false);
+    palabras.forEach(function(p){
+      var pos = 0;
+      while((pos = plano.indexOf(p,pos)) !== -1){
+        for (var k=pos;k<pos+p.length;k++) marcas[mapa[k]] = true;
+        pos += p.length;
+      }
+    });
+    var out='', dentro=false;
+    for (var n=0;n<texto.length;n++){
+      if(marcas[n] && !dentro){ out+='<mark>'; dentro=true; }
+      if(!marcas[n] && dentro){ out+='</mark>'; dentro=false; }
+      out += esc(texto[n]);
+    }
+    if(dentro) out+='</mark>';
+    return out;
+  }
+
+  function categorias(){
+    var set = {}; datos.forEach(function(d){ set[d.categoria]=1; });
+    return ['Todos'].concat(Object.keys(set));
+  }
+  function pintarChips(){
+    $chips.innerHTML = '';
+    var cs = categorias();
+    if(cs.length<=2){ $chips.style.display='none'; return; }
+    cs.forEach(function(c){
+      var b = document.createElement('button');
+      b.type='button'; b.className='chip'; b.textContent=c;
+      b.setAttribute('aria-pressed', c===cat ? 'true':'false');
+      b.addEventListener('click', function(){ cat=c; pintarChips(); render(); });
+      $chips.appendChild(b);
+    });
+  }
+
+  function render(){
+    var q = $q.value.trim();
+    $limpiar.classList.toggle('on', q.length>0);
+    var palabras = norm(q).split(/\s+/).filter(Boolean);
+    var res = datos.filter(function(d){
+      if(cat!=='Todos' && d.categoria!==cat) return false;
+      var pajar = norm([d.titulo,d.descripcion,d.categoria,(d.etiquetas||[]).join(' '),d.texto].join(' '));
+      return palabras.every(function(p){ return pajar.indexOf(p)!==-1; });
+    });
+    $conteo.textContent = res.length===0 ? '' :
+      (q||cat!=='Todos' ? res.length+(res.length===1?' prompt encontrado':' prompts encontrados')
+                         : datos.length+(datos.length===1?' prompt en la biblioteca':' prompts en la biblioteca'));
+    $lista.innerHTML = '';
+    if(!res.length){
+      $lista.innerHTML = '<div class="vacio"><h2>No encontré ese prompt todavía</h2><p>Prueba con otra palabra o dime en Instagram cuál te gustaría ver.</p><button class="btn" type="button" id="reset">Ver todos los prompts</button></div>';
+      document.getElementById('reset').addEventListener('click', function(){ $q.value=''; cat='Todos'; pintarChips(); render(); $q.focus(); });
+      return;
+    }
+    res.forEach(function(d){
+      var el = document.createElement('article'); el.className='card';
+      var tags = '<span class="tag cat">'+resaltar(d.categoria,palabras)+'</span>' +
+        (d.etiquetas||[]).map(function(t){return '<span class="tag">'+resaltar(t,palabras)+'</span>';}).join('');
+      var abierto = palabras.length>0 && norm(d.texto).indexOf(palabras[0])!==-1 && !palabras.every(function(p){return norm(d.titulo+' '+d.descripcion+' '+(d.etiquetas||[]).join(' ')).indexOf(p)!==-1;});
+      el.innerHTML =
+        '<h2>'+resaltar(d.titulo,palabras)+'</h2>'+
+        '<p class="desc">'+resaltar(d.descripcion||'',palabras)+'</p>'+
+        '<div class="tags">'+tags+'</div>'+
+        '<div class="acciones">'+
+          '<button class="btn copiar" type="button">Copiar prompt</button>'+
+          '<button class="btn ver" type="button" aria-expanded="'+(abierto?'true':'false')+'">'+(abierto?'Ocultar':'Ver completo')+'</button>'+
+        '</div>'+
+        '<div class="cuerpo" '+(abierto?'':'hidden')+'>'+resaltar(d.texto,palabras)+'</div>';
+      var cuerpo = el.querySelector('.cuerpo'), ver = el.querySelector('.ver'), cop = el.querySelector('.copiar');
+      ver.addEventListener('click', function(){
+        var h = cuerpo.hasAttribute('hidden');
+        if(h) cuerpo.removeAttribute('hidden'); else cuerpo.setAttribute('hidden','');
+        ver.setAttribute('aria-expanded', h?'true':'false');
+        ver.textContent = h ? 'Ocultar' : 'Ver completo';
+      });
+      cop.addEventListener('click', function(){
+        copiar(d.texto, function(ok){
+          cop.textContent = ok ? '¡Copiado!' : 'Selecciona y copia';
+          cop.classList.add('ok');
+          if(!ok && cuerpo.hasAttribute('hidden')) ver.click();
+          setTimeout(function(){ cop.textContent='Copiar prompt'; cop.classList.remove('ok'); }, 2200);
+        });
+      });
+      $lista.appendChild(el);
+    });
+  }
+
+  function copiar(texto, cb){
+    if(navigator.clipboard && window.isSecureContext){
+      navigator.clipboard.writeText(texto).then(function(){cb(true);},function(){viejo();});
+    } else viejo();
+    function viejo(){
+      var t = document.createElement('textarea'); t.value=texto; t.setAttribute('readonly','');
+      t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select();
+      var ok=false; try{ ok=document.execCommand('copy'); }catch(e){}
+      document.body.removeChild(t); cb(ok);
+    }
+  }
+
+  $q.addEventListener('input', render);
+  $limpiar.addEventListener('click', function(){ $q.value=''; render(); $q.focus(); });
+  var inicial = new URLSearchParams(location.search).get('q'); if(inicial) $q.value = inicial;
+  pintarChips(); render();
+})();
+</script>
+</body>
+</html>
