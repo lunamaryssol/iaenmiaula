@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Biblioteca de Recursos IA para profes · IA en mi aula</title>
-<meta name="description" content="Prompts listos para copiar y pegar para preparar mejores clases y en menos tiempo con inteligencia artificial. Por IA en mi aula.">
+<meta name="description" content="Recursos prácticos para aplicar inteligencia artificial en el aula, preparar mejores clases y ahorrar tiempo. Por IA en mi aula.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Poppins:wght@600;800&display=swap" rel="stylesheet">
@@ -110,7 +110,7 @@
 
     <div class="hero">
       <div>
-        <h1>Prompts para profes, <span class="subr">listos para pegar
+        <h1>Recursos para profes, <span class="subr">listos para pegar
           <svg viewBox="0 0 300 14" preserveAspectRatio="none" aria-hidden="true"><path d="M3 9 C 30 2, 55 13, 85 7 S 140 3, 170 8 S 235 12, 297 5" fill="none" stroke="#F26B5B" stroke-width="4" stroke-linecap="round"/></svg>
         </span></h1>
         <p class="lead">Busca, copia y pégalo en tu asistente de IA favorito. Sin tecnicismos y contigo siempre al mando: la IA ayuda, el profe decide.</p>
@@ -138,7 +138,7 @@
     </div>
 
     <div class="buscar" role="search">
-      <label for="q">Buscar prompts</label>
+      <label for="q">Buscar recursos</label>
       <svg viewBox="0 0 24 24" fill="none" stroke="#1F6F8B" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 L21 21"/></svg>
       <input id="q" type="search" placeholder="Busca por tema, materia o palabra clave…" autocomplete="off">
       <button class="limpiar" id="limpiar" type="button" aria-label="Borrar búsqueda">×</button>
@@ -151,10 +151,10 @@
 <main class="wrap">
   <div class="grid" id="lista"></div>
 
-  <section class="cierre" aria-label="Más prompts">
+  <section class="cierre" aria-label="Más recursos">
     <div>
-      <h2>Vienen más prompts. <span>Y en enero, talleres.</span></h2>
-      <p>Sigue a IA en mi aula en Instagram y avísame qué prompt te gustaría ver aquí.</p>
+      <h2>Vienen más recursos. <span>Y en enero, talleres.</span></h2>
+      <p>Sigue a IA en mi aula en Instagram y avísame qué recurso te gustaría encontrar aquí.</p>
     </div>
     <a class="cta" href="https://www.instagram.com/iaenmiaula/" target="_blank" rel="noopener">Seguir @iaenmiaula</a>
   </section>
@@ -229,11 +229,11 @@
       return palabras.every(function(p){ return pajar.indexOf(p)!==-1; });
     });
     $conteo.textContent = res.length===0 ? '' :
-      (q||cat!=='Todos' ? res.length+(res.length===1?' prompt encontrado':' prompts encontrados')
-                         : datos.length+(datos.length===1?' prompt en la biblioteca':' prompts en la biblioteca'));
+      (q||cat!=='Todos' ? res.length+(res.length===1?' recurso encontrado':' recursos encontrados')
+                         : datos.length+(datos.length===1?' recurso en la biblioteca':' recursos en la biblioteca'));
     $lista.innerHTML = '';
     if(!res.length){
-      $lista.innerHTML = '<div class="vacio"><h2>No encontré ese prompt todavía</h2><p>Prueba con otra palabra o dime en Instagram cuál te gustaría ver.</p><button class="btn" type="button" id="reset">Ver todos los prompts</button></div>';
+      $lista.innerHTML = '<div class="vacio"><h2>No encontré ese recurso todavía</h2><p>Prueba con otra palabra o dime en Instagram qué recurso te gustaría encontrar.</p><button class="btn" type="button" id="reset">Ver todos los recursos</button></div>';
       document.getElementById('reset').addEventListener('click', function(){ $q.value=''; cat='Todos'; pintarChips(); render(); $q.focus(); });
       return;
     }
@@ -247,7 +247,7 @@
         '<p class="desc">'+resaltar(d.descripcion||'',palabras)+'</p>'+
         '<div class="tags">'+tags+'</div>'+
         '<div class="acciones">'+
-          '<button class="btn copiar" type="button">Copiar prompt</button>'+
+          '<button class="btn copiar" type="button">Copiar recurso</button>'+
           '<button class="btn ver" type="button" aria-expanded="'+(abierto?'true':'false')+'">'+(abierto?'Ocultar':'Ver completo')+'</button>'+
         '</div>'+
         '<div class="cuerpo" '+(abierto?'':'hidden')+'>'+resaltar(d.texto,palabras)+'</div>';
