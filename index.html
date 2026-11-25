@@ -90,6 +90,27 @@
   .cta:hover{background:#F57A6B}
   footer{padding:0 0 46px;text-align:center;color:var(--tinta-suave);font-size:15px}
 
+
+  /* Registro de acceso */
+  .registro-capa{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:22px;background:rgba(27,43,52,.66)}
+  .registro-capa[hidden]{display:none}
+  .registro-tarjeta{width:min(100%,520px);background:#fff;border-radius:28px;padding:30px;box-shadow:0 18px 60px rgba(0,0,0,.24)}
+  .registro-tarjeta h2{font:800 28px/1.2 var(--titulos);color:var(--petroleo);margin:0 0 8px}
+  .registro-tarjeta p{margin:0 0 18px;color:var(--tinta-suave)}
+  .registro-campo{display:block;margin:14px 0;font-weight:700}
+  .registro-campo input{display:block;width:100%;margin-top:6px;padding:13px 15px;border:2px solid var(--linea);border-radius:12px;font:600 17px var(--texto);color:var(--tinta)}
+  .registro-campo input:focus{outline:3px solid rgba(31,111,139,.2);border-color:var(--petroleo)}
+  .registro-consentimiento{display:flex;gap:10px;align-items:flex-start;margin:18px 0;color:var(--tinta-suave);font-size:15px}
+  .registro-consentimiento input{margin-top:5px;accent-color:var(--petroleo)}
+  .registro-enviar{width:100%;border:0;border-radius:999px;padding:14px 20px;background:var(--coral);color:#fff;font:800 17px var(--titulos);cursor:pointer;box-shadow:0 4px 0 var(--coral-sombra)}
+  .registro-enviar:disabled{opacity:.65;cursor:wait}
+  .registro-estado{min-height:24px;margin:13px 0 0!important;font-size:15px}
+  .registro-estado.error{color:#A52F26}
+  .registro-estado.ok{color:#176A43}
+  .registro-trampa{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}
+  body:not(.acceso-listo)>header,body:not(.acceso-listo)>main,body:not(.acceso-listo)>footer{visibility:hidden}
+  @media (max-width:520px){.registro-tarjeta{padding:24px 20px}.registro-tarjeta h2{font-size:25px}}
+
   @media (max-width:760px){
     .hero{grid-template-columns:1fr}
     .robi{order:-1;width:170px;justify-self:start}
@@ -101,6 +122,33 @@
 </style>
 </head>
 <body>
+
+<div class="registro-capa" id="registroCapa">
+  <section class="registro-tarjeta" role="dialog" aria-modal="true" aria-labelledby="registroTitulo">
+    <h2 id="registroTitulo">Entra a la biblioteca</h2>
+    <p>Deja tu nombre y correo para registrar tu acceso a los recursos de IA en mi aula.</p>
+    <form id="registroForm" method="post" target="registroFrame">
+      <label class="registro-campo" for="registroNombre">Nombre
+        <input id="registroNombre" name="nombre" type="text" autocomplete="name" maxlength="120" required>
+      </label>
+      <label class="registro-campo" for="registroCorreo">Correo electrónico
+        <input id="registroCorreo" name="correo" type="email" autocomplete="email" maxlength="254" required>
+      </label>
+      <div class="registro-trampa" aria-hidden="true">
+        <label for="registroSitio">Deja este campo vacío</label>
+        <input id="registroSitio" name="website" type="text" tabindex="-1" autocomplete="off">
+      </div>
+      <label class="registro-consentimiento">
+        <input name="consentimiento" type="checkbox" value="si" required>
+        <span>Autorizo el uso de mi nombre y correo para registrar y administrar mi acceso a esta biblioteca.</span>
+      </label>
+      <button class="registro-enviar" id="registroEnviar" type="submit">Entrar a los recursos</button>
+      <p class="registro-estado" id="registroEstado" role="status" aria-live="polite"></p>
+    </form>
+    <iframe id="registroFrame" name="registroFrame" title="Respuesta del registro" hidden></iframe>
+  </section>
+</div>
+
 <header>
   <div class="wrap">
     <div class="top">
@@ -288,5 +336,48 @@
   pintarChips(); render();
 })();
 </script>
+
+<script>
+(function(){
+  var endpoint = "__APPS_SCRIPT_WEB_APP_URL__";
+  var key = "iaenmiaula_acceso_v1";
+  var capa = document.getElementById("registroCapa");
+  var form = document.getElementById("registroForm");
+  var frame = document.getElementById("registroFrame");
+  var estado = document.getElementById("registroEstado");
+  var boton = document.getElementById("registroEnviar");
+  function accesoConcedido(){
+    try { localStorage.setItem(key,"1"); } catch(e) {}
+    document.body.classList.add("acceso-listo");
+    capa.hidden = true;
+  }
+  try { if(localStorage.getItem(key)==="1") accesoConcedido(); } catch(e) {}
+  form.addEventListener("submit",function(event){
+    if(endpoint.indexOf("__APPS_SCRIPT_WEB_APP_URL__")===0){
+      event.preventDefault();
+      estado.className="registro-estado error";
+      estado.textContent="El registro está en configuración. Vuelve a intentarlo pronto.";
+      return;
+    }
+    boton.disabled=true;
+    estado.className="registro-estado";
+    estado.textContent="Guardando tu registro…";
+    form.action=endpoint;
+  });
+  window.addEventListener("message",function(event){
+    if(event.source!==frame.contentWindow || !event.data || event.data.type!=="iaenmiaula-registration") return;
+    if(event.data.ok===true){
+      estado.className="registro-estado ok";
+      estado.textContent="Registro guardado. Abriendo los recursos…";
+      accesoConcedido();
+    }else{
+      boton.disabled=false;
+      estado.className="registro-estado error";
+      estado.textContent=event.data.message || "No se pudo guardar el registro. Revisa los datos e inténtalo de nuevo.";
+    }
+  });
+})();
+</script>
+
 </body>
 </html>
