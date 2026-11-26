@@ -326,10 +326,16 @@ Estas instrucciones son comentarios de mantenimiento; no se muestran al visitant
       var cuerpo = el.querySelector('.cuerpo'), ver = el.querySelector('.ver'), cop = el.querySelector('.copiar'), compartir = el.querySelector('.compartir');
       var urlRecurso = new URL(location.pathname, location.origin);
       urlRecurso.searchParams.set('recurso', d.id);
+      if(!navigator.share && !(navigator.clipboard && window.isSecureContext)) compartir.hidden=true;
       compartir.addEventListener('click', async function(){
         var datosCompartir = {title:d.titulo, text:d.descripcion||'Recurso de IA en mi aula', url:urlRecurso.href};
         if(navigator.share){
-          try{ await navigator.share(datosCompartir); }catch(error){ if(error && error.name!=='AbortError') console.warn('No se pudo abrir el menú para compartir.',error); }
+          try{ await navigator.share(datosCompartir); }catch(error){
+            if(error && error.name!=='AbortError' && navigator.clipboard && window.isSecureContext){
+              try{ await navigator.clipboard.writeText(urlRecurso.href); compartir.textContent='¡Enlace copiado!'; setTimeout(function(){compartir.textContent='Compartir';},2200); }
+              catch(copyError){ compartir.textContent='No se pudo compartir'; }
+            }
+          }
         }else if(navigator.clipboard && window.isSecureContext){
           try{ await navigator.clipboard.writeText(urlRecurso.href); compartir.textContent='¡Enlace copiado!'; setTimeout(function(){compartir.textContent='Compartir';},2200); }
           catch(error){ compartir.textContent='No se pudo compartir'; }
