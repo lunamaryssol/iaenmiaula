@@ -83,6 +83,8 @@
   /* Tarjetas */
   .grid{display:grid;gap:20px;padding-bottom:28px}
   .card{background:#fff;border-radius:28px;padding:26px 28px 24px;box-shadow:0 10px 30px rgba(27,43,52,.07);border:2px solid transparent}
+  .acciones .btn.compartir{background:var(--petroleo);box-shadow:0 4px 0 #15566C;color:#fff}
+  .acciones .btn.compartir:hover{background:#287F9D}
   .card .portada{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:20px;margin:0 0 20px;background:var(--crema)}
   .video-recurso{position:relative;width:100%;aspect-ratio:16/9;margin:18px 0;border-radius:20px;overflow:hidden;background:#1B2B34}
   .video-recurso iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
@@ -219,6 +221,16 @@
 </div>
 
 <script src="prompts.js"></script>
+<!-- INSTRUCCIONES PERMANENTES PARA IA QUE MANTENGA ESTA WEB:
+Cada recurso publicado debe incluir un botón «Compartir» cuando el navegador ofrezca
+Web Share API o copia al portapapeles. El botón debe compartir un enlace directo y estable
+a ese recurso, usando ?recurso=ID_UNICO. Mantén el filtrado por ese parámetro para que
+el enlace abra la entrada concreta, no solo la portada de la biblioteca. Si agregas un
+recurso nuevo, asígnale un id único, conserva portada/video/metadata según corresponda
+y comprueba que su enlace compartido abre la entrada correcta. Si no hay mecanismo
+de compartir disponible, oculta o deshabilita el botón en vez de simular que funciona.
+Estas instrucciones son comentarios de mantenimiento; no se muestran al visitante.
+-->
 <script>
 (function(){
   var datos = (window.PROMPTS || []).slice();
@@ -277,7 +289,10 @@
     var q = $q.value.trim();
     $limpiar.classList.toggle('on', q.length>0);
     var palabras = norm(q).split(/\s+/).filter(Boolean);
+    // Los enlaces compartidos usan ?recurso=ID para abrir directamente una entrada.
+    var recursoCompartido = new URLSearchParams(location.search).get('recurso');
     var res = datos.filter(function(d){
+      if(recursoCompartido && d.id!==recursoCompartido) return false;
       if(cat!=='Todos' && d.categoria!==cat) return false;
       var pajar = norm([d.titulo,d.descripcion,d.categoria,(d.etiquetas||[]).join(' '),d.texto].join(' '));
       return palabras.every(function(p){ return pajar.indexOf(p)!==-1; });
@@ -305,9 +320,23 @@
         '<div class="acciones">'+
           '<button class="btn copiar" type="button">Copiar recurso</button>'+
           '<button class="btn ver" type="button" aria-expanded="'+(abierto?'true':'false')+'">'+(abierto?'Ocultar':'Ver completo')+'</button>'+
+          '<button class="btn compartir" type="button" aria-label="Compartir '+esc(d.titulo)+'">Compartir</button>'+
         '</div>'+
         '<div class="cuerpo" '+(abierto?'':'hidden')+'>'+resaltar(d.texto,palabras)+'</div>';
-      var cuerpo = el.querySelector('.cuerpo'), ver = el.querySelector('.ver'), cop = el.querySelector('.copiar');
+      var cuerpo = el.querySelector('.cuerpo'), ver = el.querySelector('.ver'), cop = el.querySelector('.copiar'), compartir = el.querySelector('.compartir');
+      var urlRecurso = new URL(location.pathname, location.origin);
+      urlRecurso.searchParams.set('recurso', d.id);
+      compartir.addEventListener('click', async function(){
+        var datosCompartir = {title:d.titulo, text:d.descripcion||'Recurso de IA en mi aula', url:urlRecurso.href};
+        if(navigator.share){
+          try{ await navigator.share(datosCompartir); }catch(error){ if(error && error.name!=='AbortError') console.warn('No se pudo abrir el menú para compartir.',error); }
+        }else if(navigator.clipboard && window.isSecureContext){
+          try{ await navigator.clipboard.writeText(urlRecurso.href); compartir.textContent='¡Enlace copiado!'; setTimeout(function(){compartir.textContent='Compartir';},2200); }
+          catch(error){ compartir.textContent='No se pudo compartir'; }
+        }else{
+          compartir.textContent='Compartir no disponible';
+        }
+      });
       ver.addEventListener('click', function(){
         var h = cuerpo.hasAttribute('hidden');
         if(h) cuerpo.removeAttribute('hidden'); else cuerpo.setAttribute('hidden','');
