@@ -488,7 +488,7 @@ a los visitantes de la biblioteca.
   window.addEventListener('message',function(event){
     var host='';
     try{host=new URL(event.origin).hostname;}catch(e){return;}
-    if(event.origin!=='https://script.google.com' && host!=='script.googleusercontent.com' && !host.endsWith('.script.googleusercontent.com')) return;
+    if(event.origin!=='https://script.google.com' && host!=='script.googleusercontent.com' && !host.endsWith('.script.googleusercontent.com') && !host.endsWith('-script.googleusercontent.com')) return;
     var data=event.data;
     if(typeof data==='string'){try{data=JSON.parse(data);}catch(e){return;}}
     if(!data || data.type!=='iaenmiaula-registration') return;
