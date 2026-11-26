@@ -349,7 +349,9 @@
   var form=document.getElementById('accessForm');
   var submit=document.getElementById('accessSubmit');
   var status=document.getElementById('accessStatus');
+  var frame=document.getElementById('registrationFrame');
   var timer=null;
+  var awaitingFrameResponse=false;
   var storageKey='iaenmiaula_access_v1';
 
   function showLibrary(){
@@ -372,15 +374,28 @@
   }
 
   form.addEventListener('submit',function(){
+    awaitingFrameResponse=true;
     status.textContent='Registrando tu acceso…';
     submit.disabled=true;
     if(timer) clearTimeout(timer);
     timer=setTimeout(function(){
       if(submit.disabled){
+        awaitingFrameResponse=false;
         submit.disabled=false;
         status.textContent='No recibimos respuesta. Comprueba tu conexión e inténtalo de nuevo.';
       }
     },20000);
+  });
+
+  // Apps Script puede guardar el registro y devolver una página sin postMessage.
+  // La carga del iframe confirma que terminó el envío y evita dejar la puerta bloqueada.
+  frame.addEventListener('load',function(){
+    if(!awaitingFrameResponse) return;
+    awaitingFrameResponse=false;
+    if(timer) clearTimeout(timer);
+    submit.disabled=false;
+    status.textContent='Acceso registrado.';
+    showLibrary();
   });
 
   window.addEventListener('message',function(event){
@@ -390,6 +405,7 @@
     var data=event.data;
     if(typeof data==='string'){try{data=JSON.parse(data);}catch(e){return;}}
     if(!data || data.type!=='iaenmiaula-registration') return;
+    awaitingFrameResponse=false;
     if(timer) clearTimeout(timer);
     submit.disabled=false;
     if(data.ok){
