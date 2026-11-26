@@ -382,7 +382,8 @@
       if(submit.disabled){
         awaitingFrameResponse=false;
         submit.disabled=false;
-        status.textContent='No recibimos respuesta. Comprueba tu conexión e inténtalo de nuevo.';
+        status.textContent='No pudimos confirmar automáticamente que tus datos quedaron registrados. Puedes continuar a la biblioteca y volver a intentarlo más tarde.';
+        showLibrary();
       }
     },20000);
   });
