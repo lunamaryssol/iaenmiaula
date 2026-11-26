@@ -480,20 +480,9 @@ a los visitantes de la biblioteca.
       if(submit.disabled){
         awaitingFrameResponse=false;
         submit.disabled=false;
-        showLibrary(true);
+        status.textContent='No pudimos confirmar el registro. Revisa tu conexión e inténtalo de nuevo.';
       }
     },20000);
-  });
-
-  // Apps Script puede guardar el registro y devolver una página sin postMessage.
-  // La carga del iframe confirma que terminó el envío y evita dejar la puerta bloqueada.
-  frame.addEventListener('load',function(){
-    if(!awaitingFrameResponse) return;
-    awaitingFrameResponse=false;
-    if(timer) clearTimeout(timer);
-    submit.disabled=false;
-    status.textContent='Acceso registrado.';
-    showLibrary();
   });
 
   window.addEventListener('message',function(event){
