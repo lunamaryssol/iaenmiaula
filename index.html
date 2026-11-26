@@ -221,15 +221,67 @@
 </div>
 
 <script src="prompts.js"></script>
-<!-- INSTRUCCIONES PERMANENTES PARA IA QUE MANTENGA ESTA WEB:
-Cada recurso publicado debe incluir un botón «Compartir» cuando el navegador ofrezca
-Web Share API o copia al portapapeles. El botón debe compartir un enlace directo y estable
-a ese recurso, usando ?recurso=ID_UNICO. Mantén el filtrado por ese parámetro para que
-el enlace abra la entrada concreta, no solo la portada de la biblioteca. Si agregas un
-recurso nuevo, asígnale un id único, conserva portada/video/metadata según corresponda
-y comprueba que su enlace compartido abre la entrada correcta. Si no hay mecanismo
-de compartir disponible, oculta o deshabilita el botón en vez de simular que funciona.
-Estas instrucciones son comentarios de mantenimiento; no se muestran al visitante.
+<!-- INSTRUCCIONES PERMANENTES PARA IA QUE MANTENGA O AMPLÍE ESTA WEB:
+
+ESTRUCTURA OBLIGATORIA DE CADA NUEVO RECURSO
+Usa como modelo la entrada publicada «Planear una clase en 30 minutos con ayuda de IA».
+Todas las nuevas entradas deben conservar la misma estructura, orden y nivel de detalle:
+
+1. PORTADA: siempre debe existir una portada propia y pertinente para el recurso.
+   Créala y guárdala dentro de assets/; utiliza una ruta relativa en el campo "portada".
+   No publiques una entrada sin portada y no reutilices una portada que no corresponda
+   al contenido. Muestra la portada al principio de la tarjeta, antes del título.
+
+2. TÍTULO: claro, específico y orientado al resultado que obtiene el docente.
+
+3. DESCRIPCIÓN: explica de forma concreta qué permite hacer el recurso, para qué sirve
+   y qué obtiene el profesor al utilizarlo. Debe aparecer debajo del título.
+
+4. VIDEO EXPLICATIVO: antes de finalizar cada nueva entrada, pregunta a la autora si
+   tiene un video explicativo para ese recurso. Si proporciona un enlace o identificador
+   de YouTube, Vimeo u otra plataforma compatible, intégralo visible en la tarjeta,
+   después de la descripción y antes de las etiquetas. Si no tiene video, continúa sin
+   video; no inventes enlaces ni dejes reproductores vacíos. Mantén el reproductor
+   adaptable a móviles.
+
+5. PALABRAS CLAVE PARA BÚSQUEDA: incluye siempre un conjunto amplio y pertinente de
+   palabras clave en el campo "etiquetas". Piensa en las expresiones que un docente
+   escribiría en el buscador para encontrar ese recurso: tema, necesidad, actividad,
+   área, herramienta, tipo de material y sinónimos. Usa términos naturales y específicos,
+   evita etiquetas genéricas o repetidas sin utilidad. Estas etiquetas deben participar
+   en el buscador y mostrarse en la tarjeta.
+
+6. CONTENIDO COMPLETO: incorpora el recurso listo para utilizar, con instrucciones,
+   pasos, ejemplos o material descargable cuando corresponda. Debe poder consultarse
+   con «Ver completo» y copiarse con «Copiar recurso».
+
+7. COMPARTIR: cada recurso debe tener un botón «Compartir» funcional. Asigna un "id"
+   único y estable. El botón debe generar un enlace directo con ?recurso=ID_UNICO para
+   abrir esa entrada concreta, no solo la página principal. Usa Web Share API cuando
+   esté disponible y, si no, copia el enlace al portapapeles. Si ninguna opción está
+   disponible, oculta o deshabilita el botón; nunca simules que se compartió.
+
+CAMPOS DE CADA ENTRADA
+Cada objeto debe incluir como mínimo:
+- id: identificador único, estable y legible.
+- titulo: nombre del recurso.
+- categoria: categoría temática.
+- etiquetas: palabras clave de búsqueda.
+- descripcion: explicación breve y útil.
+- portada: ruta de la imagen de portada creada para esa entrada.
+- texto: contenido completo del recurso.
+- video: identificador o URL válida solo si la autora confirma que tiene video.
+
+PRESENTACIÓN Y CONTROL DE CALIDAD
+Respeta el orden visual de la entrada modelo: portada, título, descripción, video
+(si existe), etiquetas, acciones para copiar/consultar/compartir y contenido completo.
+Mantén la identidad visual, los estilos responsive y las funciones existentes de la web.
+Comprueba que la portada carga, que el video se reproduce si se añadió, que las etiquetas
+se pueden buscar, que copiar funciona y que el enlace compartido abre la entrada correcta.
+No elimines ni alteres recursos existentes al añadir uno nuevo.
+
+Estas instrucciones son comentarios internos de mantenimiento: no deben mostrarse
+a los visitantes de la biblioteca.
 -->
 <script>
 (function(){
