@@ -29,6 +29,7 @@
 
   /* Acceso a la biblioteca */
   [hidden]{display:none!important}
+  .access-notice{max-width:1040px;margin:14px auto;padding:12px 18px;border:1px solid #F2B544;border-radius:14px;background:#FFF3D5;color:#1B2B34;font-size:15px}
   .access-gate{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;overflow-y:auto;padding:24px;background:var(--crema)}
   .access-card{width:min(100%,520px);padding:30px;background:#fff;border:2px solid var(--linea);border-radius:28px;box-shadow:0 14px 40px rgba(27,43,52,.12)}
   .access-card h1{margin:22px 0 10px;font-size:clamp(28px,6vw,38px)}
@@ -152,6 +153,7 @@
 </div>
 <iframe name="registrationFrame" id="registrationFrame" title="Respuesta del registro" hidden></iframe>
 <div id="appContent" hidden>
+<p id="accessNotice" class="access-notice" role="status" aria-live="polite" hidden></p>
 <header>
   <div class="wrap">
     <div class="top">
@@ -349,14 +351,19 @@
   var form=document.getElementById('accessForm');
   var submit=document.getElementById('accessSubmit');
   var status=document.getElementById('accessStatus');
+  var notice=document.getElementById('accessNotice');
   var frame=document.getElementById('registrationFrame');
   var timer=null;
   var awaitingFrameResponse=false;
   var storageKey='iaenmiaula_access_v1';
 
-  function showLibrary(){
+  function showLibrary(showNotice){
     gate.hidden=true;
     app.hidden=false;
+    if(notice){
+      notice.hidden=!showNotice;
+      if(showNotice) notice.textContent='No pudimos confirmar automáticamente el registro. Ya puedes usar la biblioteca; si quieres verificar que tus datos quedaron guardados, vuelve a enviar el formulario más tarde.';
+    }
     document.body.style.overflow='';
     try{localStorage.setItem(storageKey,'1');}catch(e){}
     var search=document.getElementById('q');
@@ -382,8 +389,7 @@
       if(submit.disabled){
         awaitingFrameResponse=false;
         submit.disabled=false;
-        status.textContent='No pudimos confirmar automáticamente que tus datos quedaron registrados. Puedes continuar a la biblioteca y volver a intentarlo más tarde.';
-        showLibrary();
+        showLibrary(true);
       }
     },20000);
   });
