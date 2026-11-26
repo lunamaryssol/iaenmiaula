@@ -142,8 +142,13 @@
       </label>
       <label class="access-consent">
         <input name="consentimiento" type="checkbox" value="si" required>
-        <span>Autorizo el uso de mi nombre y correo para registrar mi acceso a esta biblioteca.</span>
+        <span>Autorizo a Luna Marysol Rodriguez Vanegas a recolectar, almacenar y usar mi nombre y correo para registrar y gestionar mi acceso a esta biblioteca. Consulta la <a href="/politica-de-tratamiento-de-datos.html" target="_blank" rel="noopener">Política de Tratamiento de Datos Personales</a>.</span>
       </label>
+      <label class="access-consent">
+        <input name="comunicaciones" type="checkbox" value="si">
+        <span>Opcional: autorizo recibir por correo electrónico novedades, recursos y talleres de IA en mi aula. Puedo retirar esta autorización escribiendo a <a href="mailto:leadinspanish@gmail.com">leadinspanish@gmail.com</a>.</span>
+      </label>
+      <input name="versionPolitica" type="hidden" value="2026-11-26">
       <label class="access-trap" aria-hidden="true">Sitio web
         <input name="website" type="text" tabindex="-1" autocomplete="off">
       </label>
@@ -476,26 +481,13 @@ a los visitantes de la biblioteca.
       if(submit.disabled){
         awaitingFrameResponse=false;
         submit.disabled=false;
-        showLibrary(true);
+        status.textContent='No recibimos respuesta del registro. Comprueba tu conexión e inténtalo de nuevo.';
       }
     },20000);
   });
 
-  // Apps Script puede guardar el registro y devolver una página sin postMessage.
-  // La carga del iframe confirma que terminó el envío y evita dejar la puerta bloqueada.
-  frame.addEventListener('load',function(){
-    if(!awaitingFrameResponse) return;
-    awaitingFrameResponse=false;
-    if(timer) clearTimeout(timer);
-    submit.disabled=false;
-    status.textContent='Acceso registrado.';
-    showLibrary();
-  });
-
   window.addEventListener('message',function(event){
-    var host='';
-    try{host=new URL(event.origin).hostname;}catch(e){return;}
-    if(event.origin!=='https://script.google.com' && host!=='script.googleusercontent.com' && !host.endsWith('.script.googleusercontent.com')) return;
+    if(event.source!==frame.contentWindow) return;
     var data=event.data;
     if(typeof data==='string'){try{data=JSON.parse(data);}catch(e){return;}}
     if(!data || data.type!=='iaenmiaula-registration') return;
