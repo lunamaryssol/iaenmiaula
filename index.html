@@ -141,13 +141,14 @@
         <input class="access-input" id="accessEmail" name="correo" type="email" maxlength="254" autocomplete="email" required>
       </label>
       <label class="access-consent">
-        <input name="consentimiento_comunicaciones" type="checkbox" value="si">
+        <input name="consentimiento_comunicaciones" type="checkbox" value="si" required>
         <span>Quiero unirme a la lista de espera del Taller semanal de IA para profesores y recibir por correo ideas y recursos de IA para mis clases. Puedo darme de baja cuando quiera. (<a href="/politica-tratamiento-datos.html" target="_blank" rel="noopener">Política de datos</a>).</span>
       </label>
       <label class="access-consent">
         <input name="consentimiento" type="checkbox" value="si" required>
         <span>Autorizo el tratamiento de mi nombre y correo para gestionar mi registro y acceso a la Biblioteca de Recursos IA para profes, de acuerdo con la <a href="/politica-tratamiento-datos.html" target="_blank" rel="noopener">Política de Tratamiento de Datos Personales</a>.</span>
       </label>
+      <input id="parentOrigin" name="parentOrigin" type="hidden" value="">
       <label class="access-trap" aria-hidden="true">Sitio web
         <input name="website" type="text" tabindex="-1" autocomplete="off">
       </label>
@@ -442,19 +443,15 @@ a los visitantes de la biblioteca.
   var form=document.getElementById('accessForm');
   var submit=document.getElementById('accessSubmit');
   var status=document.getElementById('accessStatus');
-  var notice=document.getElementById('accessNotice');
   var frame=document.getElementById('registrationFrame');
+  var originInput=document.getElementById('parentOrigin');
   var timer=null;
   var awaitingFrameResponse=false;
   var storageKey='iaenmiaula_access_v1';
 
-  function showLibrary(showNotice){
+  function showLibrary(){
     gate.hidden=true;
     app.hidden=false;
-    if(notice){
-      notice.hidden=!showNotice;
-      if(showNotice) notice.textContent='No pudimos confirmar automáticamente el registro. Ya puedes usar la biblioteca; si quieres verificar que tus datos quedaron guardados, vuelve a enviar el formulario más tarde.';
-    }
     document.body.style.overflow='';
     try{localStorage.setItem(storageKey,'1');}catch(e){}
     var search=document.getElementById('q');
@@ -472,6 +469,7 @@ a los visitantes de la biblioteca.
   }
 
   form.addEventListener('submit',function(){
+    originInput.value=window.location.origin;
     awaitingFrameResponse=true;
     status.textContent='Registrando tu acceso…';
     submit.disabled=true;
@@ -489,13 +487,14 @@ a los visitantes de la biblioteca.
     var host='';
     try{host=new URL(event.origin).hostname;}catch(e){return;}
     if(event.origin!=='https://script.google.com' && host!=='script.googleusercontent.com' && !host.endsWith('.script.googleusercontent.com') && !host.endsWith('-script.googleusercontent.com')) return;
+    if(!awaitingFrameResponse || event.source!==frame.contentWindow) return;
     var data=event.data;
     if(typeof data==='string'){try{data=JSON.parse(data);}catch(e){return;}}
     if(!data || data.type!=='iaenmiaula-registration') return;
     awaitingFrameResponse=false;
     if(timer) clearTimeout(timer);
     submit.disabled=false;
-    if(data.ok){
+    if(data.ok===true && data.message==='Registro y autorizaciones guardados.'){
       status.textContent='Acceso registrado.';
       showLibrary();
     }else{
